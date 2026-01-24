@@ -10,7 +10,7 @@ load_dotenv()
 # Configure page settings
 st.set_page_config(
     page_title="TAKE CONTROL - Paolo Alonge",
-    page_icon="assets/logo-official.png",
+    page_icon="assets/logo-premium.png",
     layout="centered",
     initial_sidebar_state="expanded",
 )
@@ -105,7 +105,7 @@ if not api_key:
 # --- SIDEBAR ---
 with st.sidebar:
     try:
-        st.image("assets/logo-official.png", use_container_width=True)
+        st.image("assets/logo-premium.png", use_container_width=True)
     except:
         st.title("TAKE CONTROL")
     
@@ -162,17 +162,17 @@ with st.sidebar:
 
 # 1. Welcome Interface
 
-col_logo, col_title = st.columns([1, 4])
-with col_logo:
-    try:
-        st.image("assets/logo-official.png", width=150)
-    except:
-        pass
-with col_title:
-    st.markdown("<br>", unsafe_allow_html=True) # Spacer
-    st.title("TAKE CONTROL")
+# 1. Welcome Interface
 
-st.markdown("<p style='text-align: center; font-size: 1.6em; color: #E0E0E0; font-weight: 300; letter-spacing: 1px;'>Domina la tua mente, domina la tua vita.</p>", unsafe_allow_html=True)
+# Centered Logo and Title
+st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+try:
+    st.image("assets/logo-premium.png", width=120)
+except:
+    pass
+st.title("TAKE CONTROL")
+st.markdown("<p style='font-size: 1.6em; color: #E0E0E0; font-weight: 300; letter-spacing: 1px;'>Domina la tua mente, domina la tua vita.</p>", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
 
 st.divider()
 
