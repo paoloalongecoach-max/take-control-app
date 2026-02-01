@@ -79,16 +79,33 @@ st.markdown("""
         font-weight: bold;
     }
     
-    /* Input Fields */
+    /* Input Fields, Labels, and Placeholders */
+    label, .stMarkdown, p, span, .stTextInput label, .stTextArea label, .stSelectbox label, .stSlider label {
+        color: #FFFFFF !important;
+        font-weight: 500 !important;
+    }
+    
+    /* Placeholders and Input Text */
+    ::placeholder {
+        color: #FFFFFF !important;
+        opacity: 0.8; /* High visibility but slightly distinct */
+    }
+
     .stTextInput>div>div>input, .stTextArea>div>div>textarea, .stSelectbox>div>div>div {
-        background-color: #080808;
-        color: #ffffff;
-        border: 1px solid #1a1a1a;
+        background-color: #0d0d0d !important;
+        color: #FFFFFF !important;
+        border: 1px solid #333333 !important;
         border-radius: 4px;
     }
+    
     .stTextInput>div>div>input:focus, .stTextArea>div>div>textarea:focus {
-        border-color: #007BFF;
-        box-shadow: 0 0 0 1px #007BFF;
+        border-color: #007BFF !important;
+        box-shadow: 0 0 0 1px #007BFF !important;
+    }
+
+    /* Slider specific fixes */
+    [data-testid="stTickBarMin"], [data-testid="stTickBarMax"], [data-testid="stSliderTick"] {
+        color: #FFFFFF !important;
     }
 
     /* Hero Section Branding */
