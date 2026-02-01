@@ -15,38 +15,41 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Custom Styling - BRAND COLORS
-# Primary Dark: #0e1117 (Streamlit default dark is close, but we enforce) or #001f3f
-# Gold/Orange Accent: #D4Af37 (Gold) / #ff6600 (Orange hint) based on typical branding
+# Custom Styling - BRAND COLORS (Blue & Black)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap');
     
-    /* Global Text */
-    html, body, [class*="css"] {
+    /* Global Text and Background Enforcement */
+    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
         font-family: 'Outfit', sans-serif;
-        background-color: #0e1117; /* Deep Dark Background */
-        color: #E0E0E0;
+        background-color: #000000 !important;
+        color: #FFFFFF !important;
+    }
+    
+    [data-testid="stSidebar"] {
+        background-color: #050505 !important;
+        border-right: 1px solid #1a1a1a;
     }
     
     /* Buttons */
     .stButton>button {
         width: 100%;
-        background: linear-gradient(90deg, #C5A059 0%, #E0C070 100%);
-        color: #000000;
+        background: linear-gradient(90deg, #007BFF 0%, #00BFFF 100%);
+        color: #ffffff;
         border: none;
-        border-radius: 8px;
+        border-radius: 4px;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 1.5px;
+        letter-spacing: 1px;
         transition: all 0.3s ease;
         padding: 0.6rem 1rem;
     }
     .stButton>button:hover {
-        background: linear-gradient(90deg, #E0C070 0%, #C5A059 100%);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(197, 160, 89, 0.3);
-        color: #000000;
+        background: linear-gradient(90deg, #00BFFF 0%, #007BFF 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+        color: #ffffff;
     }
     
     /* Headers */
@@ -58,38 +61,64 @@ st.markdown("""
     
     /* Dividers */
     hr {
-        border-top: 1px solid rgba(197, 160, 89, 0.5);
+        border-top: 1px solid #1a1a1a;
         margin: 2rem 0;
     }
     
     /* Expander/Cards */
     .streamlit-expanderHeader {
-        background-color: #1A1D29;
-        color: #E0E0E0;
-        border-radius: 8px;
+        background-color: #0a0a0a;
+        color: #ffffff;
+        border-radius: 4px;
+        border: 1px solid #1a1a1a;
     }
     
     /* Custom Classes */
     .highlight {
-        color: #C5A059;
+        color: #007BFF;
         font-weight: bold;
     }
     
     /* Input Fields */
     .stTextInput>div>div>input, .stTextArea>div>div>textarea, .stSelectbox>div>div>div {
-        background-color: #1A1D29;
+        background-color: #080808;
         color: #ffffff;
-        border: 1px solid #333;
-        border-radius: 8px;
+        border: 1px solid #1a1a1a;
+        border-radius: 4px;
     }
     .stTextInput>div>div>input:focus, .stTextArea>div>div>textarea:focus {
-        border-color: #C5A059;
-        box-shadow: 0 0 0 1px #C5A059;
+        border-color: #007BFF;
+        box-shadow: 0 0 0 1px #007BFF;
+    }
+
+    /* Hero Section Branding */
+    .brand-header {
+        padding: 20px 0;
+        text-align: left;
+    }
+    .brand-name {
+        font-size: 24px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        margin-bottom: 0px;
+    }
+    .brand-alonge {
+        color: #007BFF;
+    }
+    .brand-subtitle {
+        color: #007BFF;
+        font-size: 16px;
+        margin-top: -5px;
+        font-weight: 400;
+    }
+    .hero-title {
+        font-size: 32px;
+        font-weight: 600;
+        margin: 40px 0;
+        line-height: 1.2;
     }
     </style>
 """, unsafe_allow_html=True)
-
-# API Setup
 # API Setup
 # Priority: 1. Streamlit Secrets (Cloud) 2. Environment Variable (Local)
 api_key = None
@@ -107,34 +136,10 @@ with st.sidebar:
     try:
         st.image("assets/logo-premium.png", use_container_width=True)
     except:
-        st.title("TAKE CONTROL")
+        pass
     
     st.markdown("### ⚙️ Impostazioni")
     
-    # Model Selector - Dynamic Fetch with graceful fallback
-    available_models = ["models/gemini-1.5-flash", "models/gemini-2.0-flash", "models/gemini-1.5-pro"]
-    
-    if api_key:
-        try:
-            genai.configure(api_key=api_key)
-            model_list = []
-            for m in genai.list_models():
-                if 'generateContent' in m.supported_generation_methods:
-                    model_list.append(m.name)
-            if model_list:
-                available_models = sorted(model_list, reverse=True)
-        except Exception:
-            pass
-
-    # Default index logic - Prefer Flash for speed/cost, or Pro if user prefers
-    default_index = 0
-    for i, m in enumerate(available_models):
-        if "1.5-flash" in m:
-            default_index = i
-            break
-
-    selected_model_name = st.selectbox("Seleziona Modello AI", available_models, index=default_index)
-
     # API Key Handling for User Override or Missing Key
     if not api_key:
         st.warning("⚠️ Chiave API di sistema non trovata.")
@@ -147,11 +152,18 @@ with st.sidebar:
         st.success("✅ App Connessa (Licenza Attiva)")
         genai.configure(api_key=api_key)
     
-    # Initialize model with selected option
+    # Automatic Model Selection - Defaulting to the best current model (2.0 Flash)
+    selected_model_name = "models/gemini-2.0-flash"
+    
     try:
         model = genai.GenerativeModel(selected_model_name)
     except Exception as e:
-        st.error(f"Errore inizializzazione modello: {e}")
+        # Fallback to 1.5 Flash if 2.0 isn't available
+        try:
+            selected_model_name = "models/gemini-1.5-flash"
+            model = genai.GenerativeModel(selected_model_name)
+        except Exception as e_inner:
+            st.error(f"Errore inizializzazione modello: {e_inner}")
 
     st.markdown("---")
     st.markdown("**Il Metodo Paolo Alonge**")
@@ -160,21 +172,19 @@ with st.sidebar:
 
 # --- MAIN INTERFACE ---
 
-# 1. Welcome Interface
+# Brand Header
+st.markdown("""
+    <div class="brand-header">
+        <div class="brand-name">PAOLO <span class="brand-alonge">ALONGE</span></div>
+        <div class="brand-subtitle">Coach Gestione Rabbia e Stress</div>
+    </div>
+""", unsafe_allow_html=True)
 
-# 1. Welcome Interface
-
-# Centered Logo and Title
-st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-try:
-    st.image("assets/logo-premium.png", width=120)
-except:
-    pass
-st.title("TAKE CONTROL")
-st.markdown("<p style='font-size: 1.6em; color: #E0E0E0; font-weight: 300; letter-spacing: 1px;'>Domina la tua mente, domina la tua vita.</p>", unsafe_allow_html=True)
-st.markdown("</div>", unsafe_allow_html=True)
+# Hero Section
+st.markdown('<div class="hero-title">Sei stanco di conflitti familiari e stress da lavoro?<br>Scopri il Coaching per Genitori e Professionisti</div>', unsafe_allow_html=True)
 
 st.divider()
+
 
 # 2. Emotional Logger
 st.subheader("🧠 Emotional Logger")
