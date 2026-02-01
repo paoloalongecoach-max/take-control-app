@@ -117,8 +117,25 @@ st.markdown("""
         margin: 40px 0;
         line-height: 1.2;
     }
+
+    /* Slogan Banner - Black text on light background */
+    .slogan-banner {
+        background: linear-gradient(90deg, #D1D1D1 0%, #FFFFFF 100%);
+        color: #000000 !important;
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-weight: 700;
+        text-align: center;
+        margin: 20px 0;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 14px;
+        width: 100%;
+        border: 1px solid #ffffff;
+    }
     </style>
 """, unsafe_allow_html=True)
+
 # API Setup
 # Priority: 1. Streamlit Secrets (Cloud) 2. Environment Variable (Local)
 api_key = None
@@ -134,10 +151,15 @@ if not api_key:
 # --- SIDEBAR ---
 with st.sidebar:
     try:
-        st.image("assets/logo-premium.png", use_container_width=True)
+        # Prioritize the official 3D P logo
+        st.image("assets/logo-official.png", use_container_width=True)
     except:
-        pass
+        try:
+            st.image("assets/logo-premium.png", use_container_width=True)
+        except:
+            pass
     
+    st.caption("v1.2 - Branding Refresh")
     st.markdown("### ⚙️ Impostazioni")
     
     # API Key Handling for User Override or Missing Key
@@ -172,13 +194,22 @@ with st.sidebar:
 
 # --- MAIN INTERFACE ---
 
-# Brand Header
-st.markdown("""
-    <div class="brand-header">
-        <div class="brand-name">PAOLO <span class="brand-alonge">ALONGE</span></div>
-        <div class="brand-subtitle">Coach Gestione Rabbia e Stress</div>
-    </div>
-""", unsafe_allow_html=True)
+# Custom Header with Official Logo
+with st.container():
+    col_logo, col_text = st.columns([1, 5])
+    with col_logo:
+        try:
+            st.image("assets/logo-official.png", width=100)
+        except:
+            pass
+    with col_text:
+        st.markdown("""
+            <div class="brand-header" style="padding-top: 10px;">
+                <div class="brand-name">PAOLO <span class="brand-alonge">ALONGE</span></div>
+                <div class="brand-subtitle">Coach Gestione Rabbia e Stress</div>
+                <div class="slogan-banner">DOMINA LA TUA MENTE, DOMINA LA TUA VITA</div>
+            </div>
+        """, unsafe_allow_html=True)
 
 # Hero Section
 st.markdown('<div class="hero-title">Sei stanco di conflitti familiari e stress da lavoro?<br>Scopri il Coaching per Genitori e Professionisti</div>', unsafe_allow_html=True)
