@@ -10,7 +10,7 @@ load_dotenv()
 # Configure page settings
 st.set_page_config(
     page_title="TAKE CONTROL - Paolo Alonge",
-    page_icon="assets/logo-premium.png",
+    page_icon="assets/logo-official.png",
     layout="centered",
     initial_sidebar_state="expanded",
 )
