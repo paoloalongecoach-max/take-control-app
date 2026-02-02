@@ -98,6 +98,16 @@ st.markdown("""
         border-radius: 4px;
     }
     
+    /* Specific targeting for Selectbox text */
+    div[data-baseweb="select"] > div {
+        color: #FFFFFF !important;
+    }
+
+    /* Target the text of the options in the dropdown list */
+    [data-testid="stSelectbox"] div div div div {
+        color: #FFFFFF !important;
+    }
+
     .stTextInput>div>div>input:focus, .stTextArea>div>div>textarea:focus {
         border-color: #007BFF !important;
         box-shadow: 0 0 0 1px #007BFF !important;
